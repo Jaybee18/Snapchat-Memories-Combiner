@@ -1,0 +1,17 @@
+[project]
+name = "snapchat-memories"
+version = "0.1.0"
+description = "Combine Snapchat exported memories (base + overlay)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pillow>=10.0.0",
+    "ffmpeg-python>=0.2.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["main"]
