@@ -1,10 +1,16 @@
 # Snapchat Memories Combiner
 
-When your memories are exported from Snapchat you'll them split by
-base and overlay (base are images and videos and overlays are pngs).
+**This script does not download anything! It just processes your files**
 
-Matching bases and overlays can be identified by the filename. They will have the same filename except for the ending, which will be either "-overlay" or "-main".
+This script combines the "-main" files with their respective "-overlay" files you get from exporting your memories from Snapchat.
 
-The program will iterate through all memories and show you the base and the combined result. You will be able to choose between keeping only the combined result, or keeping the combined and the base.
+## Usage
+Extract the .zip file(s) you got from Snapchat. There should be a `memories/` folder in each of them (Sometimes you get more than one zip).
 
-All output files will be placed in the `out/` folder.
+Move all of the images and videos into a single `memories/` folder in the same directory as the `main.py` file.
+
+Open a terminal in the same directory and run the script with `uv run main.py`. (If you don't have uv, install it from [here](https://docs.astral.sh/uv/getting-started/installation/))
+
+All base files (those that didn't have overlays **and** those that did) will be placed in a `bases/` folder. All files that had overlays are combined and placed in `out/`. 
+
+This means that there are "duplicates" that are in both folders (base in `base/` and base with overlay in `out/`), but I'll let you decide what to do with them.
