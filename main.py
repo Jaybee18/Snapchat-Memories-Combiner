@@ -111,12 +111,19 @@ def combine_video(base_path: Path, overlay_path: Path, output_path: Path):
     # Scale overlay to match video dimensions, then overlay at 0,0
     scaled_overlay = ffmpeg.filter(input_overlay, 'scale', width, height)
     video_output = ffmpeg.filter([input_video, scaled_overlay], 'overlay', x='0', y='0')
-    audio_output = input_video.audio
+    
+    # Check if video has audio stream
+    has_audio = any(s['codec_type'] == 'audio' for s in probe['streams'])
 
-    # Combine video and audio streams, preserving metadata
-    output = ffmpeg.output(video_output, audio_output, str(output_path),
-                          vcodec='libx264', acodec='copy', pix_fmt='yuv420p',
-                          **{'map_metadata': 0})
+    if has_audio:
+        audio_output = input_video.audio
+        output = ffmpeg.output(video_output, audio_output, str(output_path),
+                              vcodec='libx264', acodec='copy', pix_fmt='yuv420p',
+                              **{'map_metadata': 0})
+    else:
+        output = ffmpeg.output(video_output, str(output_path),
+                              vcodec='libx264', pix_fmt='yuv420p',
+                              **{'map_metadata': 0})
 
     # Run ffmpeg
     ffmpeg.run(output, overwrite_output=True)
