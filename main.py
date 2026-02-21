@@ -111,7 +111,7 @@ def combine_video(base_path: Path, overlay_path: Path, output_path: Path):
     # Scale overlay to match video dimensions, then overlay at 0,0
     scaled_overlay = ffmpeg.filter(input_overlay, 'scale', width, height)
     video_output = ffmpeg.filter([input_video, scaled_overlay], 'overlay', x='0', y='0')
-
+    
     # Check if video has audio stream
     has_audio = any(s['codec_type'] == 'audio' for s in probe['streams'])
 
@@ -133,37 +133,7 @@ def combine_video(base_path: Path, overlay_path: Path, output_path: Path):
     os.utime(output_path, (stat.st_atime, stat.st_mtime))
 
 
-def cleanup(pairs: List[MemoryPair]):
-    """Remove overlay files, their corresponding main files, and the bases/ directory."""
-    to_delete = []
-
-    for pair in pairs:
-        if pair.overlay_path:
-            to_delete.append(pair.base_path)
-            to_delete.append(pair.overlay_path)
-
-    print(f"\nCleanup will delete:")
-    print(f"  - {len(to_delete)} files from {MEMORIES_DIR}/ (main + overlay files that were combined)")
-    print(f"  - {BASES_DIR}/ directory")
-
-    confirm = input("\nAre you sure? This cannot be undone. [y/N] ").strip().lower()
-    if confirm != 'y':
-        print("Cleanup cancelled.")
-        return
-
-    for f in to_delete:
-        f.unlink()
-
-    if BASES_DIR.exists():
-        shutil.rmtree(BASES_DIR)
-
-    print(f"✓ Deleted {len(to_delete)} files from {MEMORIES_DIR}/")
-    print(f"✓ Deleted {BASES_DIR}/")
-
-
 def main():
-    cleanup_flag = "--cleanup" in sys.argv
-
     print("Snapchat Memories Batch Combiner")
     print("="*60)
 
@@ -206,10 +176,6 @@ def main():
     print(f"Processing complete!")
     print(f"\nCombined files: {OUTPUT_DIR}/")
     print(f"Original bases: {BASES_DIR}/")
-
-    # Cleanup if flag was passed
-    if cleanup_flag:
-        cleanup(pairs)
 
 
 if __name__ == "__main__":
