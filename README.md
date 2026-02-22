@@ -4,6 +4,10 @@
 
 This script combines the "-main" files with their respective "-overlay" files you get from exporting your memories from Snapchat.
 
+## Requirements
+- `python >= 3.10` or `uv`
+- `ffmpeg`
+
 ## Usage
 Extract the .zip file(s) you got from Snapchat. There should be a `memories/` folder in each of them (Sometimes you get more than one zip).
 
