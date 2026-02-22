@@ -14,3 +14,8 @@ Open a terminal in the same directory and run the script with `uv run main.py`. 
 All base files (those that didn't have overlays **and** those that did) will be placed in a `bases/` folder. All files that had overlays are combined and placed in `out/`. 
 
 This means that there are "duplicates" that are in both folders (base in `base/` and base with overlay in `out/`), but I'll let you decide what to do with them.
+
+
+TODO
+alles kommt nach out/
+nur mit "--include-bases" werden auch die base versionen der memories ausgegeben (kopiert); aber auch nach out/

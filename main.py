@@ -13,7 +13,6 @@ import ffmpeg
 # Directories
 MEMORIES_DIR = Path("memories")
 OUTPUT_DIR = Path("out")
-BASES_DIR = Path("bases")
 
 
 class MemoryPair:
@@ -134,12 +133,13 @@ def combine_video(base_path: Path, overlay_path: Path, output_path: Path):
 
 
 def main():
+    include_bases = "--include-bases" in sys.argv
+
     print("Snapchat Memories Batch Combiner")
     print("="*60)
 
     # Create output directories
     OUTPUT_DIR.mkdir(exist_ok=True)
-    BASES_DIR.mkdir(exist_ok=True)
 
     # Scan for memory pairs
     print("Scanning memories directory...")
@@ -150,9 +150,13 @@ def main():
     for i, pair in enumerate(pairs, 1):
         print(f"[{i}/{len(pairs)}] Processing: {pair.base_path.name}")
 
-        # Copy base to bases directory (copy2 preserves timestamps)
-        base_copy = BASES_DIR / pair.base_path.name
-        shutil.copy2(pair.base_path, base_copy)
+        has_overlay = pair.overlay_path is not None
+
+        # Copy base to out directory (copy2 preserves timestamps)
+        if (has_overlay and include_bases) or not has_overlay:
+            base_copy = OUTPUT_DIR / pair.base_path.name
+            shutil.copy2(pair.base_path, base_copy)
+            print(f"  → Base saved: {base_copy.name}")
 
         # Combine with overlay if present
         if pair.overlay_path:
@@ -166,16 +170,14 @@ def main():
 
             print(f"  → Combined: {combined_path.name}")
         else:
-            print(f"  → No overlay found, skipped combination")
+            print("  → No overlay found, skipped combination")
 
-        print(f"  → Base saved: {base_copy.name}")
         print()
 
     # Summary
     print("="*60)
-    print(f"Processing complete!")
+    print("Processing complete!")
     print(f"\nCombined files: {OUTPUT_DIR}/")
-    print(f"Original bases: {BASES_DIR}/")
 
 
 if __name__ == "__main__":
